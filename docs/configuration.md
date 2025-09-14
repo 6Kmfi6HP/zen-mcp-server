@@ -10,6 +10,7 @@ This guide covers all configuration options for the Zen MCP Server. The server i
 # Basic configuration
 DEFAULT_MODEL=auto
 GEMINI_API_KEY=your-gemini-key
+GEMINI_BASE_URL=https://your-custom-endpoint.com  # optional, defaults to https://generativelanguage.googleapis.com
 OPENAI_API_KEY=your-openai-key
 ```
 
@@ -29,8 +30,10 @@ OPENAI_API_KEY=your-openai-key
 # Google Gemini API
 GEMINI_API_KEY=your_gemini_api_key_here
 # Get from: https://makersuite.google.com/app/apikey
+# Optional: custom endpoint (proxy, Vertex AI, etc.)
+GEMINI_BASE_URL=https://your-custom-endpoint.com  # defaults to https://generativelanguage.googleapis.com
 
-# OpenAI API  
+# OpenAI API
 OPENAI_API_KEY=your_openai_api_key_here
 # Get from: https://platform.openai.com/api-keys
 

@@ -114,6 +114,7 @@ cd zen-mcp-server
       "env": {
         "PATH": "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:~/.local/bin",
         "GEMINI_API_KEY": "your-key-here",
+        "GEMINI_BASE_URL": "https://your-custom-endpoint.com",
         "DISABLED_TOOLS": "analyze,refactor,testgen,secaudit,docgen,tracer",
         "DEFAULT_MODEL": "auto"
       }
@@ -121,6 +122,8 @@ cd zen-mcp-server
   }
 }
 ```
+
+`GEMINI_BASE_URL` is optional and defaults to `https://generativelanguage.googleapis.com`.
 
 **3. Start Using!**
 ```
