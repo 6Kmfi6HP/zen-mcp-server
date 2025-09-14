@@ -2,6 +2,7 @@
 
 import base64
 import logging
+import os
 import time
 from typing import TYPE_CHECKING, Optional
 
@@ -116,9 +117,14 @@ class GeminiModelProvider(ModelProvider):
         "gemini-2.5-pro": 32768,  # Pro 2.5 thinking budget limit
     }
 
-    def __init__(self, api_key: str, **kwargs):
-        """Initialize Gemini provider with API key."""
+    DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com"
+
+    def __init__(self, api_key: str, base_url: Optional[str] = None, **kwargs):
+        """Initialize Gemini provider with API key and optional base URL."""
+        if base_url is None:
+            base_url = os.getenv("GEMINI_BASE_URL", self.DEFAULT_BASE_URL)
         super().__init__(api_key, **kwargs)
+        self.base_url = base_url
         self._client = None
         self._token_counters = {}  # Cache for token counting
 
@@ -126,7 +132,10 @@ class GeminiModelProvider(ModelProvider):
     def client(self):
         """Lazy initialization of Gemini client."""
         if self._client is None:
-            self._client = genai.Client(api_key=self.api_key)
+            self._client = genai.Client(
+                api_key=self.api_key,
+                http_options=types.HttpOptions(base_url=self.base_url),
+            )
         return self._client
 
     def get_capabilities(self, model_name: str) -> ModelCapabilities:
