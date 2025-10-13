@@ -50,15 +50,29 @@ class GeminiModelProvider(RegistryBackedProviderMixin, ModelProvider):
         "gemini-2.5-pro": 32768,  # Pro 2.5 thinking budget limit
     }
 
-    def __init__(self, api_key: str, **kwargs):
+    def __init__(self, api_key: str, base_url: Optional[str] = None, **kwargs):
         """Initialize Gemini provider with API key and optional base URL."""
+        explicit_base_url = base_url if base_url is not None else kwargs.get("base_url")
+        env_base_url_raw = get_env("GEMINI_BASE_URL")
+        env_base_url = env_base_url_raw.strip() if env_base_url_raw else None
+        resolved_base_url = explicit_base_url or env_base_url
+
+        if resolved_base_url:
+            # Persist resolved base URL in provider config for downstream diagnostics
+            kwargs["base_url"] = resolved_base_url
+
         self._ensure_registry()
         super().__init__(api_key, **kwargs)
         self._client = None
         self._token_counters = {}  # Cache for token counting
-        self._base_url = kwargs.get("base_url", None)  # Optional custom endpoint
+        self._base_url = resolved_base_url  # Optional custom endpoint
         self._timeout_override = self._resolve_http_timeout()
         self._invalidate_capability_cache()
+
+        if self._base_url:
+            source = "explicit configuration" if explicit_base_url else "GEMINI_BASE_URL"
+            logger.info("Using custom Gemini base URL via %s.", source)
+            logger.debug("Gemini base URL resolved to %s", self._base_url)
 
     # ------------------------------------------------------------------
     # Capability surface

@@ -386,7 +386,14 @@ def configure_providers():
     """
     # Log environment variable status for debugging
     logger.debug("Checking environment variables for API keys...")
-    api_keys_to_check = ["OPENAI_API_KEY", "OPENROUTER_API_KEY", "GEMINI_API_KEY", "XAI_API_KEY", "CUSTOM_API_URL"]
+    api_keys_to_check = [
+        "OPENAI_API_KEY",
+        "OPENROUTER_API_KEY",
+        "GEMINI_API_KEY",
+        "GEMINI_BASE_URL",
+        "XAI_API_KEY",
+        "CUSTOM_API_URL",
+    ]
     for key in api_keys_to_check:
         value = get_env(key)
         logger.debug(f"  {key}: {'[PRESENT]' if value else '[MISSING]'}")
@@ -408,10 +415,13 @@ def configure_providers():
 
     # Check for Gemini API key
     gemini_key = get_env("GEMINI_API_KEY")
+    gemini_base_url = get_env("GEMINI_BASE_URL")
     if gemini_key and gemini_key != "your_gemini_api_key_here":
         valid_providers.append("Gemini")
         has_native_apis = True
         logger.info("Gemini API key found - Gemini models available")
+        if gemini_base_url:
+            logger.info("Gemini API will use custom base URL: %s", gemini_base_url)
 
     # Check for OpenAI API key
     openai_key = get_env("OPENAI_API_KEY")
