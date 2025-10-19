@@ -487,6 +487,15 @@ def configure_providers():
 
     # Check for custom API endpoint (Ollama, vLLM, etc.)
     custom_url = get_env("CUSTOM_API_URL")
+    # Filter out placeholder values - treat them as unset
+    if custom_url and (
+        custom_url.startswith("your_") 
+        or "placeholder" in custom_url.lower()
+        or not custom_url.startswith(("http://", "https://"))
+    ):
+        logger.debug(f"Skipping custom provider - invalid or placeholder URL: {custom_url}")
+        custom_url = None
+        
     if custom_url:
         # IMPORTANT: Always read CUSTOM_API_KEY even if empty
         # - Some providers (vLLM, LM Studio, enterprise APIs) require authentication
