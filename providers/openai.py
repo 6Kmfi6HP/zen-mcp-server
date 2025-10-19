@@ -1,6 +1,7 @@
 """OpenAI model provider implementation."""
 
 import logging
+import os
 from typing import TYPE_CHECKING, ClassVar, Optional
 
 if TYPE_CHECKING:
@@ -29,7 +30,8 @@ class OpenAIModelProvider(RegistryBackedProviderMixin, OpenAICompatibleProvider)
         """Initialize OpenAI provider with API key."""
         self._ensure_registry()
         # Set default OpenAI base URL, allow override for regions/custom endpoints
-        kwargs.setdefault("base_url", "https://api.openai.com/v1")
+        base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
+        kwargs.setdefault("base_url", base_url)
         super().__init__(api_key, **kwargs)
         self._invalidate_capability_cache()
 
