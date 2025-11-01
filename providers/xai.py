@@ -30,7 +30,7 @@ class XAIModelProvider(RegistryBackedProviderMixin, OpenAICompatibleProvider):
 
     def __init__(self, api_key: str, **kwargs):
         """Initialize X.AI provider with API key.
-        
+
         Args:
             api_key: API key for authentication
             **kwargs: Additional configuration options. base_url can be provided

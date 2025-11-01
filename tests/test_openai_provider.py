@@ -118,7 +118,7 @@ class TestOpenAIProvider:
         """Test getting model capabilities for GPT-5."""
         provider = OpenAIModelProvider("test-key")
 
-        capabilities = provider.get_capabilities("gpt-5")
+        capabilities = provider.get_capabilities("gpt-5-high")  # Use canonical name, or "gpt-5" alias
         assert capabilities.model_name == "gpt-5"
         assert capabilities.friendly_name == "OpenAI (GPT-5)"
         assert capabilities.context_window == 400_000

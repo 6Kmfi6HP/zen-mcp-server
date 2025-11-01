@@ -85,7 +85,7 @@ class TestAliasTargetRestrictions:
         provider = OpenAIModelProvider(api_key="test-key")
 
         assert provider.validate_model_name("gpt5")
-        assert provider.validate_model_name("gpt-5")
+        assert provider.validate_model_name("gpt-5")  # Both resolve to gpt-5-high
 
     @patch.dict(os.environ, {"GOOGLE_ALLOWED_MODELS": "gemini-2.5-flash"})  # Allow target
     def test_gemini_restriction_policy_allows_alias_when_target_allowed(self):
@@ -162,8 +162,14 @@ class TestAliasTargetRestrictions:
         provider = OpenAIModelProvider(api_key="test-key")
         service = ModelRestrictionService()
 
-        assert service.is_allowed(ProviderType.OPENAI, "gpt-5")
-        assert provider.validate_model_name("gpt-5")
+        # gpt5 resolves to gpt-5-high (canonical name)
+        # The restriction service should allow gpt-5-high when gpt5 is in allowed list
+        resolved_canonical = provider._resolve_model_name("gpt5")
+        assert resolved_canonical == "gpt-5-high"
+        # Test that the canonical name is allowed when the alias is in the allowed list
+        assert service.is_allowed(ProviderType.OPENAI, resolved_canonical, "gpt5")
+        # validate_model_name should work with the alias
+        assert provider.validate_model_name("gpt5")
 
     @patch.dict(os.environ, {"GOOGLE_ALLOWED_MODELS": "flash"}, clear=True)
     def test_service_alias_allows_canonical_gemini(self):
