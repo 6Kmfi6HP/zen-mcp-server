@@ -393,6 +393,7 @@ def configure_providers():
         "GEMINI_API_KEY",
         "GEMINI_BASE_URL",
         "XAI_API_KEY",
+        "XAI_BASE_URL",
         "CUSTOM_API_URL",
     ]
     for key in api_keys_to_check:
@@ -460,10 +461,13 @@ def configure_providers():
 
     # Check for X.AI API key
     xai_key = get_env("XAI_API_KEY")
+    xai_base_url = get_env("XAI_BASE_URL")
     if xai_key and xai_key != "your_xai_api_key_here":
         valid_providers.append("X.AI (GROK)")
         has_native_apis = True
         logger.info("X.AI API key found - GROK models available")
+        if xai_base_url:
+            logger.info("X.AI API will use custom base URL: %s", xai_base_url)
 
     # Check for DIAL API key
     dial_key = get_env("DIAL_API_KEY")

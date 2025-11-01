@@ -37,6 +37,9 @@ OPENAI_API_KEY=your_openai_api_key_here
 # X.AI GROK API
 XAI_API_KEY=your_xai_api_key_here
 # Get from: https://console.x.ai/
+
+# Optional: Custom X.AI API base URL (for custom endpoints or regions)
+# XAI_BASE_URL=https://api.x.ai/v1
 ```
 
 **Option 2: OpenRouter (Access multiple models through one API)**

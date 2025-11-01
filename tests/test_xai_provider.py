@@ -40,6 +40,28 @@ class TestXAIProvider:
         assert provider.api_key == "test-key"
         assert provider.base_url == "https://custom.x.ai/v1"
 
+    @patch.dict(os.environ, {"XAI_BASE_URL": "https://custom-env.x.ai/v1"})
+    def test_initialization_with_env_base_url(self):
+        """Test provider initialization with XAI_BASE_URL environment variable."""
+        provider = XAIModelProvider("test-key")
+        assert provider.api_key == "test-key"
+        assert provider.base_url == "https://custom-env.x.ai/v1"
+
+    @patch.dict(os.environ, {"XAI_BASE_URL": "https://env.x.ai/v1"})
+    def test_initialization_priority_kwargs_over_env(self):
+        """Test that kwargs base_url takes priority over XAI_BASE_URL environment variable."""
+        provider = XAIModelProvider("test-key", base_url="https://kwargs.x.ai/v1")
+        assert provider.api_key == "test-key"
+        assert provider.base_url == "https://kwargs.x.ai/v1"  # kwargs should win
+
+    @patch.dict(os.environ, {}, clear=True)
+    def test_initialization_default_base_url(self):
+        """Test provider initialization uses default base URL when no env or kwargs."""
+        # Ensure XAI_BASE_URL is not set (cleared by patch.dict with clear=True)
+        provider = XAIModelProvider("test-key")
+        assert provider.api_key == "test-key"
+        assert provider.base_url == "https://api.x.ai/v1"
+
     def test_model_validation(self):
         """Test model name validation."""
         provider = XAIModelProvider("test-key")

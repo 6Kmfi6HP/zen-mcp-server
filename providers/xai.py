@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, ClassVar, Optional
 if TYPE_CHECKING:
     from tools.models import ToolModelCategory
 
+from utils.env import get_env
+
 from .openai_compatible import OpenAICompatibleProvider
 from .registries.xai import XAIModelRegistry
 from .registry_provider_mixin import RegistryBackedProviderMixin
@@ -27,10 +29,20 @@ class XAIModelProvider(RegistryBackedProviderMixin, OpenAICompatibleProvider):
     MODEL_CAPABILITIES: ClassVar[dict[str, ModelCapabilities]] = {}
 
     def __init__(self, api_key: str, **kwargs):
-        """Initialize X.AI provider with API key."""
-        # Set X.AI base URL
-        kwargs.setdefault("base_url", "https://api.x.ai/v1")
+        """Initialize X.AI provider with API key.
+        
+        Args:
+            api_key: API key for authentication
+            **kwargs: Additional configuration options. base_url can be provided
+                     directly or via XAI_BASE_URL environment variable.
+        """
         self._ensure_registry()
+        # Set X.AI base URL with priority: kwargs > environment variable > default
+        # Allow override for custom endpoints or regions
+        if "base_url" not in kwargs:
+            # Only set from env/default if not explicitly provided in kwargs
+            base_url = get_env("XAI_BASE_URL") or "https://api.x.ai/v1"
+            kwargs["base_url"] = base_url
         super().__init__(api_key, **kwargs)
         self._invalidate_capability_cache()
 
